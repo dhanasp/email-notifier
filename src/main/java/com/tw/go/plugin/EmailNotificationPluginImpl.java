@@ -16,6 +16,9 @@
 
 package com.tw.go.plugin;
 
+import com.github.bdpiparva.plugin.base.dispatcher.BaseBuilder;
+import com.github.bdpiparva.plugin.base.dispatcher.RequestDispatcher;
+import com.github.bdpiparva.plugin.base.dispatcher.notification.NotificationType;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
@@ -26,6 +29,7 @@ import com.thoughtworks.go.plugin.api.request.GoApiRequest;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import com.tw.go.plugin.models.PluginSettings;
 import com.tw.go.plugin.util.FieldValidator;
 import com.tw.go.plugin.util.JSONUtils;
 import org.apache.commons.io.IOUtils;
@@ -41,7 +45,7 @@ public class EmailNotificationPluginImpl implements GoPlugin {
 
     public static final String PLUGIN_ID = "email.notifier";
     public static final String EXTENSION_NAME = "notification";
-    private static final List<String> goSupportedVersions = asList("1.0");
+    private static final List<String> goSupportedVersions = asList("4.0");
 
     public static final String PLUGIN_SETTINGS_SMTP_HOST = "smtp_host";
     public static final String PLUGIN_SETTINGS_SMTP_PORT = "smtp_port";
@@ -66,10 +70,20 @@ public class EmailNotificationPluginImpl implements GoPlugin {
 
     private GoApplicationAccessor goApplicationAccessor;
     private SessionFactory sessionFactory;
+    private RequestDispatcher requestDispatcher;
 
     @Override
     public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor) {
         this.goApplicationAccessor = goApplicationAccessor;
+
+        requestDispatcher= BaseBuilder
+                .forNotification()
+                .v4()
+                .pluginSettings(PluginSettings.class)
+                .pluginSettingsView("/plugin-settings.template.html")
+                .validatePluginSettings()
+                .notificationInterestedIn(NotificationType.STAGE_STATUS)
+                .build();
     }
 
     @Override

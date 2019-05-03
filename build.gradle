@@ -66,6 +66,7 @@ dependencies {
     compile 'commons-io:commons-io:2.6'
     compile 'org.javassist:javassist:3.24.1-GA'
     compile 'org.apache.commons:commons-lang3:3.8.1'
+    compile group: 'com.github.bdpiparva.plugin.base', name: 'gocd-plugin-base', version: '0.0.4'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.hamcrest:hamcrest-core:1.3'
